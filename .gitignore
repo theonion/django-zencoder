@@ -1,0 +1,10 @@
+*.py[co]
+
+.Python
+bin
+include
+lib
+
+*.db
+
+__pycache__
