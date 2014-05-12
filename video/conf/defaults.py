@@ -1,4 +1,4 @@
-VIDEO_TRANSCODER = "video.zencoder.ZencoderTranscoder"
+VIDEO_TRANSCODER = "video.transcoders.Zencoder"
 
 VIDEO_PREFERENCES = (
     "video/mp4",

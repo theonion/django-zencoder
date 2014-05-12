@@ -32,7 +32,7 @@ class Zencoder(TranscoderBase):
             "base_url": output_url,
             "outputs": settings.ZENCODER_OUTPUTS,
             "notifications": [{
-                "url": reverse("video.views.notify", transcoder="video.transcoders.Zencoder")
+                "url": reverse("video.views.notify", kwargs={"transcoder": "video.transcoders.Zencoder"})
             }]
         }
 
@@ -44,7 +44,7 @@ class Zencoder(TranscoderBase):
         if response.status_code != 201:
             raise Exception("Zencoder response {}".format(response.status_code))
         
-        self.job_id = response.json().get('id')
+        self.job_id = str(response.json().get('id'))
         return self.job_id, response.json()
 
     def cancel(self):

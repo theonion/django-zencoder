@@ -63,6 +63,8 @@ class Job(models.Model):
         (FAILED, 'Failed')
     )
 
+    objects = JobManager()
+
     video = models.ForeignKey(Video)
     status = models.IntegerField(choices=STATUSES, default=NOT_STARTED, help_text="The encoding status")
     job_id = models.CharField(null=True, blank=True, max_length=255, help_text="The external job ID")
@@ -71,7 +73,8 @@ class Job(models.Model):
 
     @property
     def transcoder(self):
-        cls = importlib.import_module(self.transcoder_class)
+        module_name, class_name = self.transcoder_class.rsplit(".", 1)
+        cls = getattr(importlib.import_module(module_name), class_name)
         return cls(job_id=self.job_id)
 
     def start(self):

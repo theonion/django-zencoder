@@ -9,7 +9,7 @@ from video.conf import settings
 
 @pytest.mark.django_db
 def test_video_sorting():
-    video = Video.objects.create(input="http://example.com/input.mp4")
+    video = Video.objects.create(input="s3://example.com/input.mp4")
     Source.objects.create(video=video, url="http://example.com/output.mp4", content_type="video/mp4")
     Source.objects.create(video=video, url="http://example.com/output.webm", content_type="video/webm")
     Source.objects.create(video=video, url="http://example.com/output.m3u8", content_type="application/x-mpegURL")
