@@ -18,13 +18,14 @@ def zencoder_jobs_mock(url, request):
         }]
     })
     headers = {'content-type': 'application/json'}
-    return response(201, content, headers, None, 5, request)
+    return response(status_code=201, content=content, headers=headers, request=request)
 
 
 @pytest.mark.django_db
 def test_start_endcode(settings):
     settings.ZENCODER_API_KEY = "abcde12345"
 
+    # First, let's mock the start of the encoding.
     video = Video.objects.create(input="s3://example.com/input.mp4")
     with HTTMock(zencoder_jobs_mock):
         job = Job.objects.create_from_video(video)
