@@ -28,6 +28,6 @@ def test_start_endcode(settings):
     # First, let's mock the start of the encoding.
     video = Video.objects.create(input="s3://example.com/input.mp4")
     with HTTMock(zencoder_jobs_mock):
-        job = Job.objects.create_from_video(video)
+        job = Job.objects.start(video)
         assert job.status == Job.IN_PROGRESS
-        assert job.job_id == "93541697"
+        assert job.job_id == 93541697

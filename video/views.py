@@ -14,13 +14,13 @@ from .conf import settings
 from .models import Video, Job, Source
 
 
-def notify(request, job_id):
-    job = get_object_or_404(Job, pk=job_id)
+def notify(request):
+    # job = get_object_or_404(Job, pk=job_id)
     data = json.loads(request.body)
-    sources = job.transcoder.finish(data)
-    for params in sources:
-        Source.objects.create(video=job.video, **params)
-    return HttpResponse(content="", status=204)
+    # sources = job.transcoder.finish(data)
+    # for params in sources:
+    #     Source.objects.create(video=job.video, **params)
+    # return HttpResponse(content="", status=204)
 
 
 @require_http_methods(["POST"])

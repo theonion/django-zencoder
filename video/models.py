@@ -1,7 +1,10 @@
 import importlib
+import json
+import requests
 
+
+from django.core.urlresolvers import reverse
 from django.db import models
-
 from json_field import JSONField
 
 from .conf import settings
@@ -43,8 +46,8 @@ class Source(models.Model):
 
 class JobManager(models.Manager):
 
-    def create_from_video(self, video):
-        job = self.create(video=video)
+    def start(self, video):
+        job = self.model(video=video)
         job.start()
         job.save()
         return job
@@ -64,28 +67,42 @@ class Job(models.Model):
     )
 
     objects = JobManager()
+    AUTH_HEADERS = {'Zencoder-Api-Key': settings.ZENCODER_API_KEY}
 
     video = models.ForeignKey(Video)
     status = models.IntegerField(choices=STATUSES, default=NOT_STARTED, help_text="The encoding status")
-    job_id = models.CharField(null=True, blank=True, max_length=255, help_text="The external job ID")
-    data = JSONField(null=True, blank=True)
-    transcoder_class = models.CharField(max_length=255, default=settings.VIDEO_TRANSCODER)
-
-    @property
-    def transcoder(self):
-        module_name, class_name = self.transcoder_class.rsplit(".", 1)
-        cls = getattr(importlib.import_module(module_name), class_name)
-        return cls(job_id=self.job_id)
+    job_id = models.IntegerField()
+    data = JSONField()
 
     def start(self):
-        output_url = "s3://{}/{}/{}/".format(
+        base_url = "s3://{}/{}/{}/".format(
             settings.VIDEO_ENCODING_BUCKET,
             settings.VIDEO_ENCODING_DIRECTORY,
-            self.video.id)
-        self.job_id, self.data = self.transcoder.start(self.video.input, output_url)
-        self.status = self.IN_PROGRESS
-        return self.data
+            self.video.pk)
+        payload = {
+            "input": self.video.input,
+            "base_url": base_url,
+            "outputs": settings.ZENCODER_OUTPUTS,
+            "notifications": [{
+                "url": reverse("video.views.notify")
+            }]
+        }
+
+        response = requests.post(
+            "https://app.zencoder.com/api/v2/jobs",
+            data=json.dumps(payload),
+            headers=self.AUTH_HEADERS)
+
+        if response.status_code != 201:
+            raise Exception("Zencoder response <{}>".format(response.status_code))
+        
+        self.data = response.json()
+        self.job_id = self.data.get('id')
+        self.status = Job.IN_PROGRESS
 
     def cancel(self):
-        self.transcoder.cancel()
-        self.status = self.FAILED
+        url = "https://app.zencoder.com/api/v2/jobs/{}/cancel.json".format(self.job_id)
+        response = requests.put(url, headers=self.AUTH_HEADERS)
+        if response.status_code != 204:
+            raise Exception("Couldn't cancel the job!")
+        self.status = Job.FAILED
