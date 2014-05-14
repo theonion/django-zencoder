@@ -64,10 +64,14 @@ class Job(models.Model):
         (FAILED, 'Failed')
     )
 
+    class Meta:
+        ordering = ("-created",)
+
     objects = JobManager()
     AUTH_HEADERS = {'Zencoder-Api-Key': settings.ZENCODER_API_KEY}
 
     video = models.ForeignKey(Video)
+    created = models.DateTimeField(auto_now_add=True)
     status = models.IntegerField(choices=STATUSES, default=NOT_STARTED, help_text="The encoding status")
     job_id = models.IntegerField()
     data = JSONField()

@@ -78,9 +78,14 @@ def video(request, video_id=None):
 
     upload_endpoint = "https://{}.s3.amazonaws.com".format(settings.VIDEO_ENCODING_BUCKET)
 
+    status = "Not started"
+    if video.job_set.count() > 0:
+        status = video.job_set.all()[0].get_status_display()
+
     contents = {
         "id": video.id,
         "path": video.input,
+        "status": status,
         "upload_endpoint": upload_endpoint,
         'AWSAccessKeyId': settings.AWS_ACCESS_KEY_ID,
         'acl': 'private',
