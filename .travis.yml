@@ -13,7 +13,9 @@ install:
   - pip install django==$DJANGO_VERSION
   - pip install --download-cache $HOME/.pip-cache -r requirements-dev.txt
 script:
-  - py.test tests/
+  - py.test --cov zencoder tests/
+after_success:
+  - coveralls
 notifications:
   email:
   - csinchok@theonion.com

@@ -66,5 +66,5 @@ setup(
     packages=get_packages("zencoder"),
     package_data=get_package_data(package),
     install_requires=requires,
-    tests_require=["httmock==1.2.2", "pytest==2.5.2", "pytest-django==2.6"],
+    tests_require=["httmock==1.2.2", "pytest==2.5.2", "pytest-django==2.6", "coveralls==0.4.1"],
 )
