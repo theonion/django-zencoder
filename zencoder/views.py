@@ -90,7 +90,7 @@ def video(request, video_id=None):
         'AWSAccessKeyId': settings.AWS_ACCESS_KEY_ID,
         'acl': 'private',
         'success_action_status': '201',
-        'policy': policy,
-        'signature': base64.b64encode(signature)
+        'policy': policy.decode("utf-8"),
+        'signature': base64.b64encode(signature).decode("utf-8")
     }
     return HttpResponse(json.dumps(contents), status=status_code, content_type="application/json")
