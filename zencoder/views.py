@@ -68,7 +68,7 @@ def video(request, video_id=None):
         ]
     }
 
-    policy_document = json.dumps(policy_dict)
+    policy_document = json.dumps(policy_dict).encode("utf-8")
     policy = base64.b64encode(policy_document)
 
     signature = hmac.new(
