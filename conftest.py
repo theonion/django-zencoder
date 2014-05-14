@@ -9,14 +9,25 @@ def pytest_configure():
 
     settings.configure(
         DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': ':memory:'
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": ":memory:"
             }
         },
         USE_TZ=True,
         INSTALLED_APPS=(
-            "zencoder",
+            "django.contrib.auth",
+            "django.contrib.contenttypes",
+            "django.contrib.sessions",
+            "django.contrib.sites",
+            "django.contrib.messages",
+            "django.contrib.staticfiles",
+
+            "zencoder"
+        ),
+        TEMPLATE_LOADERS = (
+            "django.template.loaders.filesystem.Loader",
+            "django.template.loaders.app_directories.Loader"
         ),
         ROOT_URLCONF = "testproject.urls",
         VIDEO_ENCODING_DIRECTORY = "video",
