@@ -41,4 +41,3 @@ def test_video_endpoint(admin_client):
     response = admin_client.post(detail_endpoint, data={"name": "test2.flv"})
     video = Video.objects.get(pk=video_id)
     assert video.name == "test2.flv"
-
