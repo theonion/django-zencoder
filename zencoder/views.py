@@ -16,7 +16,7 @@ from .models import Video, Job
 
 def notify(request):
     # job = get_object_or_404(Job, pk=job_id)
-    data = json.loads(request.body)
+    data = json.loads(request.body.decode("utf-8"))
     job = get_object_or_404(Job, job_id=data.get("job", {}).get("id"))
     job.notify(data)
     job.save()
