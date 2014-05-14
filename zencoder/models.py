@@ -84,7 +84,7 @@ class Job(models.Model):
             "base_url": base_url,
             "outputs": settings.ZENCODER_OUTPUTS,
             "notifications": [{
-                "url": reverse("video.views.notify")
+                "url": reverse("zencoder.views.notify")
             }]
         }
 

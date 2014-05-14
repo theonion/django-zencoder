@@ -59,7 +59,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'video'
+    'zencoder'
 )
 
 VIDEO_ENCODING_DIRECTORY = "video"

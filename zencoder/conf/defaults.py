@@ -1,5 +1,3 @@
-VIDEO_TRANSCODER = "video.transcoders.Zencoder"
-
 VIDEO_PREFERENCES = (
     "video/mp4",
     "video/webm",

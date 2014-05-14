@@ -3,8 +3,8 @@ import pytest
 
 from django.core.urlresolvers import reverse
 
-from video.models import Video, Source
-from video.conf import settings
+from zencoder.models import Video, Source
+from zencoder.conf import settings
 
 
 @pytest.mark.django_db

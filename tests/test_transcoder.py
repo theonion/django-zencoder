@@ -4,7 +4,7 @@ import pytest
 from django.core.urlresolvers import reverse
 from django.test import Client
 
-from video.models import Job, Video
+from zencoder.models import Job, Video
 
 from httmock import urlmatch, HTTMock, response
 
@@ -223,7 +223,7 @@ def test_start_endcode(settings):
 
     # Now, let's simulate a notification callback from zencoder
     client = Client()
-    notify_endpoint = reverse("video.views.notify")
+    notify_endpoint = reverse("zencoder.views.notify")
     response = client.post(notify_endpoint, json.dumps(SAMPLE_NOTIFICATION_RESPONSE), content_type="application/json")
     assert response.status_code == 204
     assert video.sources.count() == 3
