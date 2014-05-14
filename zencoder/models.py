@@ -1,7 +1,5 @@
-import importlib
 import json
 import requests
-
 
 from django.core.urlresolvers import reverse
 from django.db import models
