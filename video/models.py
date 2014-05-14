@@ -106,3 +106,24 @@ class Job(models.Model):
         if response.status_code != 204:
             raise Exception("Couldn't cancel the job!")
         self.status = Job.FAILED
+
+    def notify(self, data):
+        """Recieves a notification about the job completion, and adds video sources"""
+        for output in data.get("outputs"):
+            """By convention, we expect every output that is a "source" to have a label
+            that is the mimetype of the file"""
+            content_type = output.get("label")
+            if content_type:
+                url = output.get("url")
+                if settings.VIDEO_URL_PROCESSOR:
+                    url = settings.VIDEO_URL_PROCESSOR(url)
+                Source.objects.create(
+                    video=self.video,
+                    content_type=content_type,
+                    width=output.get("width"),
+                    bitrate=output.get("video_bitrate_in_kbps"),
+                    url=url
+                )
+        self.status = Job.COMPLETE
+
+

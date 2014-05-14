@@ -6,6 +6,8 @@ VIDEO_PREFERENCES = (
     "application/x-mpegURL"
 )
 
+VIDEO_URL_PROCESSOR = None
+
 ZENCODER_API_KEY = None
 
 ZENCODER_OUTPUTS = [

@@ -11,16 +11,16 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 
 from .conf import settings
-from .models import Video, Job, Source
+from .models import Video, Job
 
 
 def notify(request):
     # job = get_object_or_404(Job, pk=job_id)
     data = json.loads(request.body)
-    # sources = job.transcoder.finish(data)
-    # for params in sources:
-    #     Source.objects.create(video=job.video, **params)
-    # return HttpResponse(content="", status=204)
+    job = get_object_or_404(Job, job_id=data.get("job", {}).get("id"))
+    job.notify(data)
+    job.save()
+    return HttpResponse(content="", status=204)
 
 
 @require_http_methods(["POST"])
