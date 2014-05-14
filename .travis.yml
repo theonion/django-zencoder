@@ -12,7 +12,6 @@ cache:
 install:
   - pip install django==$DJANGO_VERSION
   - pip install --download-cache $HOME/.pip-cache -r requirements-dev.txt
-  - export PATH=$PATH:$TRAVIS_BUILD_DIR
 script:
   - py.test tests/
 notifications:

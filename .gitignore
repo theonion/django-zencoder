@@ -5,6 +5,7 @@
 bin
 include
 lib
+dist
 
 *.db
 
