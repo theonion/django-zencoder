@@ -204,9 +204,8 @@ SAMPLE_NOTIFICATION_RESPONSE = {
 @urlmatch(netloc=r'app\.zencoder\.com$', path="/api/v2/jobs")
 def zencoder_jobs_mock(url, request):
 
-    content = json.dumps(SAMPLE_JOB_RESPONSE)
     headers = {'content-type': 'application/json'}
-    return response(status_code=201, content=content, headers=headers, request=request)
+    return response(status_code=201, content=SAMPLE_JOB_RESPONSE, headers=headers, request=request)
 
 
 @pytest.mark.django_db

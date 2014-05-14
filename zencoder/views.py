@@ -72,7 +72,7 @@ def video(request, video_id=None):
     policy = base64.b64encode(policy_document)
 
     signature = hmac.new(
-        settings.AWS_SECRET_ACCESS_KEY,
+        settings.AWS_SECRET_ACCESS_KEY.encode("utf-8"),
         policy,
         hashlib.sha1).digest()
 
