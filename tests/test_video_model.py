@@ -25,7 +25,7 @@ def test_video_endpoint(admin_client):
     new_endpoint = reverse("video-new")
     response = admin_client.post(new_endpoint, data={"name": "test.flv"})
     assert response.status_code == 201
-    data = json.loads(response.content.encode("utf-8"))
+    data = json.loads(response.content.decode("utf-8"))
     video_id = data.get("id")
 
     expected_path = "{}/{}/{}/test.flv".format(
