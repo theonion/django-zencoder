@@ -16,7 +16,7 @@ def pytest_configure():
         },
         USE_TZ=True,
         INSTALLED_APPS=(
-            "zencoder"
+            "zencoder",
         ),
         ROOT_URLCONF = "testproject.urls",
         VIDEO_ENCODING_DIRECTORY = "video",
