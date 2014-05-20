@@ -218,8 +218,7 @@ def test_start_endcode(admin_client):
         encode_endpoint = reverse("zencoder.views.encode", kwargs={"video_id": video.id})
         response = admin_client.post(encode_endpoint)
         assert response.status_code == 200
-        data = json.loads(response.content)
-        print(data)
+        data = json.loads(response.content.decode("utf-8"))
         assert data["json"] == "https://app.zencoder.com/api/v2/jobs/93541697/progress.json?api_key=abcde12345"
 
         job = Job.objects.get(video=video)
