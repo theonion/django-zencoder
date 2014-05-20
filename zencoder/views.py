@@ -28,8 +28,17 @@ def notify(request):
 def encode(request, video_id):
     video = get_object_or_404(Video, pk=video_id)
 
-    job = Job(video=video)
-    data = job.start()
+    job = Job.objects.start(video=video)
+    fmt = {
+        "base_url": "https://app.zencoder.com/api/v2/jobs/{}/progress".format(job.job_id),
+        "api_key": settings.ZENCODER_API_KEY
+    }
+
+    data = {
+        "json": "{base_url}.json?api_key={api_key}".format(**fmt),
+        "xml": "{base_url}.xml?api_key={api_key}".format(**fmt),
+        "js": "{base_url}.js?api_key={api_key}".format(**fmt),
+    }
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 

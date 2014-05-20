@@ -209,21 +209,27 @@ def zencoder_jobs_mock(url, request):
 
 
 @pytest.mark.django_db
-def test_start_endcode(settings):
-    settings.ZENCODER_API_KEY = "abcde12345"
+def test_start_endcode(admin_client):
 
     # First, let's mock the start of the encoding.
     video = Video.objects.create(input="s3://example.com/input.mp4")
     with HTTMock(zencoder_jobs_mock):
-        job = Job.objects.start(video)
+
+        encode_endpoint = reverse("zencoder.views.encode", kwargs={"video_id": video.id})
+        response = admin_client.post(encode_endpoint)
+        assert response.status_code == 200
+        data = json.loads(response.content)
+        print(data)
+        assert data["json"] == "https://app.zencoder.com/api/v2/jobs/93541697/progress.json?api_key=abcde12345"
+
+        job = Job.objects.get(video=video)
         assert job.status == Job.IN_PROGRESS
         assert job.job_id == 93541697
         assert job.data == SAMPLE_JOB_RESPONSE
 
     # Now, let's simulate a notification callback from zencoder
-    client = Client()
     notify_endpoint = reverse("zencoder.views.notify")
-    response = client.post(notify_endpoint, json.dumps(SAMPLE_NOTIFICATION_RESPONSE), content_type="application/json")
+    response = admin_client.post(notify_endpoint, json.dumps(SAMPLE_NOTIFICATION_RESPONSE), content_type="application/json")
     assert response.status_code == 204
     assert video.sources.count() == 3
     job = Job.objects.get(id=job.id)  # refresh from the db
