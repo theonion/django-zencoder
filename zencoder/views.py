@@ -9,13 +9,14 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 
 from .conf import settings
 from .models import Video, Job
 
 
+@csrf_exempt
 def notify(request):
-    # job = get_object_or_404(Job, pk=job_id)
     data = json.loads(request.body.decode("utf-8"))
     job = get_object_or_404(Job, job_id=data.get("job", {}).get("id"))
     job.notify(data)
