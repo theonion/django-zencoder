@@ -47,7 +47,8 @@ class JobManager(models.Manager):
     def start(self, video):
         job = self.model(video=video)
         job.start()
-        job.save()
+        if job.data.get("test", False) is False:
+            job.save()
         return job
 
 
@@ -76,19 +77,19 @@ class Job(models.Model):
     job_id = models.IntegerField()
     data = JSONField()
 
-    def start(self):
-        base_url = "s3://{}/{}/{}/".format(
-            settings.VIDEO_ENCODING_BUCKET,
-            settings.VIDEO_ENCODING_DIRECTORY,
-            self.video.pk)
-        payload = {
-            "input": self.video.input,
-            "base_url": base_url,
-            "outputs": settings.ZENCODER_OUTPUTS,
-            "notifications": [{
-                "url": reverse("zencoder.views.notify")
+    def start(self, host=None):
+        payload = settings.ZENCODER_JOB_PAYLOAD
+        if "base_url" not in payload:
+            payload["base_url"] = "s3://{}/{}/{}/".format(
+                settings.VIDEO_ENCODING_BUCKET,
+                settings.VIDEO_ENCODING_DIRECTORY,
+                self.video.pk)
+        payload["input"] = self.video.input
+        
+        if host:
+            payload["notifications"] = [{
+                "url": "http://{host}{path}".format(host=host, path=reverse("zencoder.views.notify"))
             }]
-        }
 
         response = requests.post(
             "https://app.zencoder.com/api/v2/jobs",
@@ -97,9 +98,9 @@ class Job(models.Model):
 
         if response.status_code != 201:
             raise Exception("Zencoder response <{}>".format(response.status_code))
-        
+
         self.data = response.json()
-        self.job_id = self.data.get('id')
+        self.job_id = self.data.get("id")
         self.status = Job.IN_PROGRESS
 
     def cancel(self):

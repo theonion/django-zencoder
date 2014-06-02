@@ -2,9 +2,9 @@ import json
 import pytest
 
 from django.core.urlresolvers import reverse
-from django.test import Client
 
 from zencoder.models import Job, Video
+from zencoder.conf import settings
 
 from httmock import urlmatch, HTTMock, response
 
@@ -209,7 +209,21 @@ def zencoder_jobs_mock(url, request):
 
 
 @pytest.mark.django_db
-def test_start_endcode(admin_client):
+def test_encode_endpoint():
+
+    if settings.ZENCODER_API_KEY is None:
+        return
+
+    settings.ZENCODER_JOB_PAYLOAD["mock"] = True
+
+    video = Video.objects.create(input="s3://example.com/input.mp4")
+    job = Job.objects.start(video=video)
+
+    del settings.ZENCODER_JOB_PAYLOAD["mock"]
+
+
+@pytest.mark.django_db
+def test_start_encode(admin_client):
 
     # First, let's mock the start of the encoding.
     video = Video.objects.create(input="s3://example.com/input.mp4")
@@ -219,7 +233,7 @@ def test_start_endcode(admin_client):
         response = admin_client.post(encode_endpoint)
         assert response.status_code == 200
         data = json.loads(response.content.decode("utf-8"))
-        assert data["json"] == "https://app.zencoder.com/api/v2/jobs/93541697/progress.json?api_key=abcde12345"
+        assert data["json"] == "https://app.zencoder.com/api/v2/jobs/93541697/progress.json?api_key={}".format(settings.ZENCODER_API_KEY)
 
         job = Job.objects.get(video=video)
         assert job.status == Job.IN_PROGRESS

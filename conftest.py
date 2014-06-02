@@ -33,7 +33,7 @@ def pytest_configure():
         VIDEO_ENCODING_DIRECTORY = "video",
         VIDEO_ENCODING_BUCKET = "example_bucket",
 
-        ZENCODER_API_KEY = "abcde12345",
+        ZENCODER_API_KEY = "7401a69bd1bca22e4bb7bf6ae38d4220",
 
         AWS_SECRET_ACCESS_KEY = "12345",
         AWS_ACCESS_KEY_ID = "abcd1234",
