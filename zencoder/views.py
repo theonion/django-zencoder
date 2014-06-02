@@ -59,9 +59,9 @@ def video(request, video_id=None):
         video.name = request.POST["name"]
 
     expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
-    path = os.path.join(settings.VIDEO_ENCODING_DIRECTORY, str(video.id), video.name)
+    key = os.path.join(settings.VIDEO_ENCODING_DIRECTORY, str(video.id), video.name)
 
-    video.input = "s3://{}/{}".format(settings.VIDEO_ENCODING_BUCKET, path)
+    video.input = "s3://{}/{}".format(settings.VIDEO_ENCODING_BUCKET, key)
     video.save()
 
     # Now let's build a signature for this upload, using:
@@ -72,7 +72,7 @@ def video(request, video_id=None):
             {"bucket": settings.VIDEO_ENCODING_BUCKET},
             {"acl": "private"},
             {"success_action_status": '201'},
-            ["$key", path],
+            {"$key": key},
             ["content-length-range", 0, 1073741824],
         ]
     }
@@ -94,6 +94,7 @@ def video(request, video_id=None):
     contents = {
         "id": video.id,
         "path": video.input,
+        "key": key,
         "status": status,
         "upload_endpoint": upload_endpoint,
         'AWSAccessKeyId': settings.AWS_ACCESS_KEY_ID,
