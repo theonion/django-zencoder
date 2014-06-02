@@ -72,7 +72,7 @@ def video(request, video_id=None):
             {"bucket": settings.VIDEO_ENCODING_BUCKET},
             {"acl": "private"},
             {"success_action_status": '201'},
-            {"$key": key},
+            {"key": key},
             ["content-length-range", 0, 1073741824],
         ]
     }
