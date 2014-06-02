@@ -28,7 +28,7 @@ def notify(request):
 def encode(request, video_id):
     video = get_object_or_404(Video, pk=video_id)
 
-    job = Job.objects.start(video=video)
+    job = Job.objects.start(video=video, host=request.get_host())
     fmt = {
         "base_url": "https://app.zencoder.com/api/v2/jobs/{}/progress".format(job.job_id),
         "api_key": settings.ZENCODER_API_KEY
