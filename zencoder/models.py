@@ -44,7 +44,7 @@ class Source(models.Model):
 
 class JobManager(models.Manager):
 
-    def start(self, video):
+    def start(self, video, host=None):
         job = self.model(video=video)
         job.start()
         if job.data.get("test", False) is False:
@@ -77,7 +77,7 @@ class Job(models.Model):
     job_id = models.IntegerField()
     data = JSONField()
 
-    def start(self, host=None):
+    def start(self):
         payload = settings.ZENCODER_JOB_PAYLOAD
         if "base_url" not in payload:
             payload["base_url"] = "s3://{}/{}/{}/".format(
@@ -85,11 +85,6 @@ class Job(models.Model):
                 settings.VIDEO_ENCODING_DIRECTORY,
                 self.video.pk)
         payload["input"] = self.video.input
-        
-        if host:
-            payload["notifications"] = [{
-                "url": "http://{host}{path}".format(host=host, path=reverse("zencoder.views.notify"))
-            }]
 
         response = requests.post(
             "https://app.zencoder.com/api/v2/jobs",
