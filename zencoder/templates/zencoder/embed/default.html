@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Video Error</title>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #333;
+    }
+    </style>
+    <link href="//vjs.zencdn.net/4.6/video-js.css" rel="stylesheet">
+  </head>
+  <body>
+    <video id="embed" data-video-id="{{ video.id }}" class="video-js vjs-default-skin"
+  controls preload="auto" width="640" height="264"
+  {% if video.poster %}poster="{{ video.poster }}"{% endif %}
+  data-setup='{}'>
+        {% for source in video.sources.all %}
+        <source src="{{ source.url}}" type='{{ source.content_type }}' />
+        {% endfor %}        
+        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+    </video>
+    <script src="//vjs.zencdn.net/4.6/video.js"></script>
+  </body>
+</html>

@@ -6,10 +6,11 @@ import datetime
 import os
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.detail import DetailView
 
 from .conf import settings
 from .models import Video, Job
@@ -100,3 +101,50 @@ def video(request, video_id=None):
         'signature': base64.b64encode(signature).decode("utf-8")
     }
     return HttpResponse(json.dumps(contents), status=status_code, content_type="application/json")
+
+
+class VideoEmbedView(DetailView):
+    model = Video
+    context_object_name = "video"
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        pk = self.request.GET.get("id", None)
+        try:
+            obj = queryset.get(pk=pk)
+        except queryset.model.DoesNotExist:
+            raise Http404("No Video found")
+        return obj
+
+    def get_template_names(self):
+        names = ["zencoder/embed/video.html", "zencoder/embed/default.html"]
+        if self.object.job_set.count() > 0:
+            job = self.object.job_set.all()[0]
+            if job.status == Job.IN_PROGRESS:
+                names.insert(0, "zencoder/embed/encoding.html")
+            elif job.status != Job.COMPLETE:
+                names.insert(0, "zencoder/embed/failed.html")
+        return names
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.object.sources.count() == 0:
+            # If there aren't any sources, this is a bad video
+            response_kwargs["status"] = 500
+
+        if self.object.job_set.count() > 0:
+            job = self.object.job_set.all()[0]
+
+            if job.status == Job.IN_PROGRESS:
+                # If the video is still encoding, we'll make it a 202
+                response_kwargs["status"] = 202
+            elif job.status != Job.COMPLETE:
+                response_kwargs["status"] = 500
+
+        response = super(VideoEmbedView, self).render_to_response(context, **response_kwargs)
+        if response.status_code != 200:
+            response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response["Pragma"] = "no-cache"
+            response["Expires"] = "0"
+        return response
+embed = VideoEmbedView.as_view()
