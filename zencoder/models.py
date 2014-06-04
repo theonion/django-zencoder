@@ -124,4 +124,19 @@ class Job(models.Model):
                 )
         self.status = Job.COMPLETE
 
+    def encode_status_endpoints(self):
+        if self.status == Job.NOT_STARTED:
+            return None
+
+        fmt = {
+            "base_url": "https://app.zencoder.com/api/v2/jobs/{}/progress".format(self.job_id),
+            "api_key": settings.ZENCODER_API_KEY
+        }
+
+        return {
+            "json": "{base_url}.json?api_key={api_key}".format(**fmt),
+            "xml": "{base_url}.xml?api_key={api_key}".format(**fmt),
+            "js": "{base_url}.js?api_key={api_key}".format(**fmt),
+        }
+
 

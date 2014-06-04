@@ -30,16 +30,7 @@ def encode(request, video_id):
     video = get_object_or_404(Video, pk=video_id)
 
     job = Job.objects.start(video=video)
-    fmt = {
-        "base_url": "https://app.zencoder.com/api/v2/jobs/{}/progress".format(job.job_id),
-        "api_key": settings.ZENCODER_API_KEY
-    }
-
-    data = {
-        "json": "{base_url}.json?api_key={api_key}".format(**fmt),
-        "xml": "{base_url}.xml?api_key={api_key}".format(**fmt),
-        "js": "{base_url}.js?api_key={api_key}".format(**fmt),
-    }
+    data = job.encode_status_endpoints()
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 
@@ -89,14 +80,18 @@ def video(request, video_id=None):
     upload_endpoint = "https://{}.s3.amazonaws.com".format(settings.VIDEO_ENCODING_BUCKET)
 
     status = "Not started"
+    encode_status_endpoints = None
     if video.job_set.count() > 0:
-        status = video.job_set.all()[0].get_status_display()
+        job = video.job_set.all()[0]
+        status = job.get_status_display()
+        encode_status_endpoints = job.encode_status_endpoints()
 
     contents = {
         "id": video.id,
         "path": video.input,
         "key": key,
         "status": status,
+        "encode_status_endpoints": encode_status_endpoints,
         "upload_endpoint": upload_endpoint,
         'AWSAccessKeyId': settings.AWS_ACCESS_KEY_ID,
         'acl': 'private',
