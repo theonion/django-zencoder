@@ -84,7 +84,8 @@ class Job(models.Model):
             settings.VIDEO_ENCODING_BUCKET,
             settings.VIDEO_ENCODING_DIRECTORY,
             self.video.pk)
-        payload["outputs"].insert(0, {"base_url": base_url})
+        for output in payload["outputs"]:
+            output["base_url"] = base_url
         payload["input"] = self.video.input
 
         response = requests.post(
