@@ -79,11 +79,12 @@ class Job(models.Model):
 
     def start(self):
         payload = settings.ZENCODER_JOB_PAYLOAD
-        if "base_url" not in payload:
-            payload["base_url"] = "s3://{}/{}/{}/".format(
-                settings.VIDEO_ENCODING_BUCKET,
-                settings.VIDEO_ENCODING_DIRECTORY,
-                self.video.pk)
+
+        base_url = "s3://{}/{}/{}/".format(
+            settings.VIDEO_ENCODING_BUCKET,
+            settings.VIDEO_ENCODING_DIRECTORY,
+            self.video.pk)
+        payload["outputs"].insert(0, {"base_url": base_url})
         payload["input"] = self.video.input
 
         response = requests.post(
