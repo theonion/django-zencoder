@@ -15,6 +15,7 @@ def test_video_embed(client):
         id=video.id)
     
     response = client.get(video_embed_url)
+    assert "X-Frame-Options" not in response
     assert response.status_code == 500
 
     # Now we add some sources

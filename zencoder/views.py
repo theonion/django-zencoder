@@ -8,6 +8,7 @@ import os
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
@@ -106,6 +107,10 @@ def video(request, video_id=None):
 class VideoEmbedView(DetailView):
     model = Video
     context_object_name = "video"
+
+    @xframe_options_exempt
+    def get(self, *args, **kwargs):
+        return super(VideoEmbedView, self).get(*args, **kwargs)
 
     def get_object(self, queryset=None):
         if queryset is None:
