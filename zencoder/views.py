@@ -4,6 +4,7 @@ import hmac
 import hashlib
 import datetime
 import os
+import re
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, Http404
@@ -115,10 +116,14 @@ class VideoEmbedView(DetailView):
     def get_object(self, queryset=None):
         if queryset is None:
             queryset = self.get_queryset()
-        pk = self.request.GET.get("id", None)
+        pk = self.request.GET.get("id", "")
+        """OK, don't ask me why, but there are some requests appending a "/" to
+        the end of the querystring. So I'm gonna fix that for them."""
+
+        pk = re.sub(r'[^\d.]+', '', pk)
         try:
             obj = queryset.get(pk=pk)
-        except queryset.model.DoesNotExist:
+        except (queryset.model.DoesNotExist, ValueError):
             raise Http404("No Video found")
         return obj
 

@@ -6,6 +6,23 @@ from zencoder.models import Video, Source, Job
 
 
 @pytest.mark.django_db
+def test_video_embed_params(client):
+    video = Video.objects.create(input="s3://example.com/input.mp4")
+    Source.objects.create(video=video, url="http://example.com/output.mp4", content_type="video/mp4")
+    Source.objects.create(video=video, url="http://example.com/output.webm", content_type="video/webm")
+    Source.objects.create(video=video, url="http://example.com/output.m3u8", content_type="application/x-mpegURL")
+
+    id_param = "{}///".format(video.id)
+
+    video_embed_url = "{endpoint}?id={id}".format(
+        endpoint=reverse("zencoder.views.embed"),
+        id=id_param)
+
+    response = client.get(video_embed_url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 def test_video_embed(client):
 
     video = Video.objects.create(input="s3://example.com/input.mp4")
@@ -49,3 +66,4 @@ def test_video_embed(client):
     assert response.template_name[0] == "zencoder/embed/video.html"
     assert response.template_name[1] == "zencoder/embed/default.html"
     assert response.status_code == 200
+
