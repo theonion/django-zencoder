@@ -209,6 +209,27 @@ def zencoder_jobs_mock(url, request):
 
 
 @pytest.mark.django_db
+def test_video_api(admin_client):
+    video = Video.objects.create(input="s3://example.com/input.mp4")
+    video_endpoint = reverse("zencoder.views.video", kwargs={"video_id": video.id})
+
+    response = admin_client.get(video_endpoint)
+    assert response.status_code == 200
+    data = json.loads(response.content.decode("utf-8"))
+    assert data["poster"] is None
+
+    response = admin_client.post(video_endpoint, {"poster": "http://www.example.com/poster.jpeg"})
+    assert response.status_code == 200
+    data = json.loads(response.content.decode("utf-8"))
+    assert data["poster"] == "http://www.example.com/poster.jpeg"
+
+    response = admin_client.get(video_endpoint)
+    assert response.status_code == 200
+    data = json.loads(response.content.decode("utf-8"))
+    assert data["poster"] == "http://www.example.com/poster.jpeg"
+
+
+@pytest.mark.django_db
 def test_encode_endpoint():
 
     if settings.ZENCODER_API_KEY is None:
@@ -217,7 +238,7 @@ def test_encode_endpoint():
     settings.ZENCODER_JOB_PAYLOAD["mock"] = True
 
     video = Video.objects.create(input="s3://example.com/input.mp4")
-    job = Job.objects.start(video=video)
+    Job.objects.start(video=video)
 
     del settings.ZENCODER_JOB_PAYLOAD["mock"]
 

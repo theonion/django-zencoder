@@ -51,7 +51,10 @@ def video(request, video_id=None):
         else:
             # Let's just make sure this video exists
             video = get_object_or_404(Video, pk=video_id)
-        video.name = request.POST["name"]
+        if "name" in request.POST:
+            video.name = request.POST["name"]
+
+        video.poster = request.POST.get("poster")
 
     expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
     key = os.path.join(settings.VIDEO_ENCODING_DIRECTORY, str(video.id), video.name)
@@ -93,6 +96,7 @@ def video(request, video_id=None):
         "id": video.id,
         "path": video.input,
         "key": key,
+        "poster": video.poster,
         "status": status,
         "encode_status_endpoints": encode_status_endpoints,
         "upload_endpoint": upload_endpoint,
