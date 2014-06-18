@@ -86,6 +86,9 @@ class Job(models.Model):
             self.video.pk)
         for output in payload["outputs"]:
             output["base_url"] = base_url
+            if "thumbnails" in output:
+                output["thumbnails"]["base_url"] = base_url
+
         payload["input"] = self.video.input
 
         response = requests.post(
