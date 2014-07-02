@@ -140,7 +140,9 @@ class VideoEmbedView(DetailView):
             elif job.status != Job.COMPLETE:
                 names.insert(0, "zencoder/embed/failed.html")
         else:
-            names.insert(0, "zencoder/embed/failed.html")
+            if self.object.sources.count() == 0:
+                # Really, this has only failed if there are no sources.
+                names.insert(0, "zencoder/embed/failed.html")
         return names
 
     def render_to_response(self, context, **response_kwargs):

@@ -42,6 +42,7 @@ def test_video_embed(client):
 
     response = client.get(video_embed_url)
     assert response.status_code == 200
+    assert response.template_name[0] == "zencoder/embed/video.html"
 
     job = Job.objects.create(video=video, status=Job.IN_PROGRESS, job_id="12345")
     response = client.get(video_embed_url)
