@@ -38,15 +38,13 @@ def encode(request, video_id):
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
-@require_http_methods(["POST", "GET", "OPTIONS"])
+@require_http_methods(["POST", "GET"])
 @staff_member_required
 def video(request, video_id=None):
     status_code = 200
     if request.method == "GET":
         video = get_object_or_404(Video, pk=video_id)
-    elif request.method == "OPTIONS":
-        return HttpResponse()
-    else:
+    elif request.method == "POST":
         if video_id is None:
             video = Video.objects.create()
             status_code = 201
@@ -57,6 +55,8 @@ def video(request, video_id=None):
             video.name = request.POST["name"]
 
         video.poster = request.POST.get("poster")
+    else:
+        return HttpResponse("")
 
     expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
     key = os.path.join(settings.VIDEO_ENCODING_DIRECTORY, str(video.id), video.name)
