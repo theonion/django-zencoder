@@ -38,12 +38,14 @@ def encode(request, video_id):
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
-@require_http_methods(["POST", "GET"])
+@require_http_methods(["POST", "GET", "OPTIONS"])
 @staff_member_required
 def video(request, video_id=None):
     status_code = 200
     if request.method == "GET":
         video = get_object_or_404(Video, pk=video_id)
+    elif request.method == "OPTIONS":
+        return HttpResponse()
     else:
         if video_id is None:
             video = Video.objects.create()
