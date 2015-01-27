@@ -73,7 +73,7 @@ def video(request, video_id=None):
             {"acl": "private"},
             {"success_action_status": '201'},
             {"key": key},
-            ["content-length-range", 0, 1073741824],
+            ["content-length-range", 0, settings.VIDEO_ENCODING_MAX_SIZE],
         ]
     }
 
