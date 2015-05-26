@@ -19,7 +19,6 @@ requires = [
     "requests==2.2.1",
     "django-json-field==0.5.5",
     "six==1.5.2",
-    "south"
 ]
 
 
