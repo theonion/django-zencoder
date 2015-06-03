@@ -24,6 +24,9 @@ def notify(request):
     job = get_object_or_404(Job, job_id=data.get("job", {}).get("id"))
     job.notify(data)
     job.save()
+    target_video = job.video
+    target_video.duration = data.get("input", {}).get("duration_in_ms")
+    target_video.save()
     return HttpResponse(content="", status=204)
 
 
