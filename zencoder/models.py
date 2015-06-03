@@ -1,7 +1,6 @@
 import json
 import requests
 
-from django.core.urlresolvers import reverse
 from django.db import models
 from json_field import JSONField
 
@@ -23,12 +22,28 @@ class Video(models.Model):
     name = models.CharField(max_length=255)
     poster = models.URLField(null=True, blank=True)
     input = models.URLField(null=True, blank=True)
+    duration = models.PositiveIntegerField(blank=True, default=0)
 
     def __unicode__(self):
         return self.name
 
     def ordered_sources(self):
         return sorted(list(self.sources.all()), key=sort_video)
+
+    def make_formatted_duration(self):
+        # null check
+        if self.duration == 0 or self.duration is None:
+            return ''
+        # set constants
+        one_second = 1000
+        one_minute = 60 * one_second
+        one_hour = 60 * one_minute
+        # divide it up
+        _minutes = self.duration % one_hour
+        minutes = _minutes // one_minute
+        _seconds = _minutes % one_minute
+        seconds = _seconds // one_second
+        return "{}:{:02}".format(minutes, seconds)
 
 
 class Source(models.Model):
@@ -143,5 +158,3 @@ class Job(models.Model):
             "xml": "{base_url}.xml?api_key={api_key}".format(**fmt),
             "js": "{base_url}.js?api_key={api_key}".format(**fmt),
         }
-
-
