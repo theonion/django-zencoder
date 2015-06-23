@@ -44,7 +44,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255)),
                 ('poster', models.URLField(null=True, blank=True)),
                 ('input', models.URLField(null=True, blank=True)),
-                ('duration', models.PositiveIntegerField(default=0, blank=True)),
             ],
         ),
         migrations.AddField(

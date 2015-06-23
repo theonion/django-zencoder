@@ -30,6 +30,8 @@ def pytest_configure():
             'django.middleware.csrf.CsrfViewMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.middleware.csrf.CsrfViewMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
         ),
         TEMPLATE_LOADERS = (

@@ -15,7 +15,7 @@ author = "Onion Tech Team"
 author_email = "tech@theonion.com"
 license = "MIT"
 requires = [
-    "Django>=1.5",
+    "Django>=1.8",
     "requests==2.2.1",
     "django-json-field==0.5.5",
     "six==1.5.2",
@@ -66,5 +66,5 @@ setup(
     packages=get_packages("zencoder"),
     package_data=get_package_data(package),
     install_requires=requires,
-    tests_require=["httmock==1.2.2", "pytest==2.5.2", "pytest-django==2.6", "coveralls==0.4.1", "pytest-cov==1.6"],
+    tests_require=["httmock==1.2.2", "pytest==2.7.1", "pytest-django==2.8", "coveralls==0.4.1", "pytest-cov==1.6"],
 )
