@@ -33,17 +33,20 @@ class Video(models.Model):
     def make_formatted_duration(self):
         # null check
         if self.duration == 0 or self.duration is None:
-            return ''
+            return "00:00:00"
+
         # set constants
         one_second = 1000
         one_minute = 60 * one_second
         one_hour = 60 * one_minute
+
         # divide it up
-        _minutes = self.duration % one_hour
-        minutes = _minutes // one_minute
-        _seconds = _minutes % one_minute
-        seconds = _seconds // one_second
-        return "{}:{:02}".format(minutes, seconds)
+        hours, _minutes = divmod(self.duration, one_hour)
+        minutes, _seconds = divmod(_minutes, one_minute)
+        seconds, _ = divmod(_seconds, one_second)
+
+        # done
+        return "{:02}:{:02}:{:02}".format(hours, minutes, seconds)
 
 
 class Source(models.Model):

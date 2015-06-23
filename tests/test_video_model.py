@@ -41,3 +41,15 @@ def test_video_endpoint(admin_client):
     response = admin_client.post(detail_endpoint, data={"name": "test2.flv"})
     video = Video.objects.get(pk=video_id)
     assert video.name == "test2.flv"
+
+
+@pytest.mark.django_db
+def test_make_formatted_duration():
+    video = Video()
+    assert video.make_formatted_duration() == "00:00:00"
+
+    video.duration = 12229000
+    assert video.make_formatted_duration() == "03:23:49"
+
+    video.duration = 62000
+    assert video.make_formatted_duration() == "00:01:02"

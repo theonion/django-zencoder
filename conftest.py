@@ -22,8 +22,15 @@ def pytest_configure():
             "django.contrib.sites",
             "django.contrib.messages",
             "django.contrib.staticfiles",
-
             "zencoder"
+        ),
+        MIDDLEWARE_CLASSES = (
+            'django.middleware.common.CommonMiddleware',
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.middleware.csrf.CsrfViewMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
         ),
         TEMPLATE_LOADERS = (
             "django.template.loaders.filesystem.Loader",
@@ -32,9 +39,7 @@ def pytest_configure():
         ROOT_URLCONF = "testproject.urls",
         VIDEO_ENCODING_DIRECTORY = "video",
         VIDEO_ENCODING_BUCKET = "example_bucket",
-
         ZENCODER_API_KEY = "7401a69bd1bca22e4bb7bf6ae38d4220",
-
         AWS_SECRET_ACCESS_KEY = "12345",
         AWS_ACCESS_KEY_ID = "abcd1234",
     )

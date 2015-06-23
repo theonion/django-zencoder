@@ -1,8 +1,8 @@
 -r requirements.txt
 
-httmock==1.2.2
-py==1.4.20
-pytest==2.5.2
-pytest-django==2.6
-pytest-cov==1.6
-coveralls==0.4.1
+httmock
+py
+pytest
+pytest-django
+pytest-cov
+coveralls
