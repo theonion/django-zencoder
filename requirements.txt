@@ -1,4 +1,3 @@
 Django
 django-json-field
 requests
-south
