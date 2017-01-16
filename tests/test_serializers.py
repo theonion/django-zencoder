@@ -55,3 +55,4 @@ def test_video_serializer():
     assert data["input"] == test_data["video"].input
     assert data["name"] == test_data["video"].name
     assert data["poster"] == test_data["video"].poster
+    assert len(data["sources"]) == len(test_data["sources"])
