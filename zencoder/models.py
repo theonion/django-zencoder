@@ -117,7 +117,11 @@ class Job(models.Model):
         if response.status_code != 201:
             raise Exception("Zencoder response <{}>".format(response.status_code))
 
-        self.data = response.json()
+        try:
+            self.data = response.json()
+        except TypeError:
+            self.data = json.loads(response.content)
+
         self.job_id = self.data.get("id")
         self.status = Job.IN_PROGRESS
 

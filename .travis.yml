@@ -1,8 +1,7 @@
 language: python
 python:
   - '2.7'
-  - '3.2'
-  - '3.4'
+  - '3.5'
 env:
   - DJANGO_VERSION=1.8
 cache:
@@ -10,7 +9,7 @@ cache:
     - "$HOME/.pip-cache/"
 install:
   - pip install django==$DJANGO_VERSION
-  - pip install --download-cache $HOME/.pip-cache -r requirements-dev.txt
+  - pip install --cache-dir $HOME/.pip-cache -r requirements-dev.txt
 script:
   - py.test --cov zencoder tests/
 after_success:
