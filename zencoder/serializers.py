@@ -34,7 +34,6 @@ class ZencoderVideoSerializer(PlaceholderFieldsMixin, serializers.ModelSerialize
             "tags": [],
             "targeting": {},
             "tunic_campaign_url": None,
-            "videojs_options": {},
         }
 
     def get_poster_url(self, obj):

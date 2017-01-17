@@ -68,7 +68,6 @@ def test_video_serializer():
     assert data["tags"] == []
     assert data["targeting"] == {}
     assert data["tunic_campaign_url"] is None
-    assert data["videojs_options"] == {}
 
     # Model values
     assert data["duration"] == test_data["video"].duration
