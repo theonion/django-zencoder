@@ -50,9 +50,32 @@ def test_source_serializer():
 def test_video_serializer():
     test_data = serializer_test_data()
     data = ZencoderVideoSerializer().to_representation(test_data["video"])
+
+    # Placeholder values
+    assert data["category"] == ""
+    assert data["channel_logo_url"] == ""
+    assert data["channel_name"] == ""
+    assert data["channel_slug"] == ""
+    assert data["channel_url"] == ""
+    assert data["description"] == ""
+    assert data["player_options"] == {}
+    assert data["season"] == ""
+    assert data["series_logo_url"] == ""
+    assert data["series_name"] == ""
+    assert data["series_slug"] == ""
+    assert data["series_url"] == ""
+    assert data["sponsor_id"] is None
+    assert data["tags"] == []
+    assert data["targeting"] == {}
+    assert data["tunic_campaign_url"] is None
+    assert data["videojs_options"] == {}
+
+    # Model values
     assert data["duration"] == test_data["video"].duration
     assert data["id"] == test_data["video"].id
     assert data["input"] == test_data["video"].input
     assert data["name"] == test_data["video"].name
+    assert data["title"] == test_data["video"].name
     assert data["poster"] == test_data["video"].poster
+    assert data["poster_url"] == test_data["video"].poster
     assert len(data["sources"]) == len(test_data["sources"])
