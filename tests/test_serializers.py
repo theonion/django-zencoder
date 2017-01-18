@@ -58,7 +58,16 @@ def test_video_serializer():
     assert data["channel_slug"] == ""
     assert data["channel_url"] == ""
     assert data["description"] == ""
-    assert data["player_options"] == {}
+    assert data["player_options"] == {
+        "comscore": {
+            "id": None,
+            "metadata": {
+                "c3": "",
+                "ns_st_ci": None,
+                "c4": ""
+            }
+        }
+    }
     assert data["season"] == ""
     assert data["series_logo_url"] == ""
     assert data["series_name"] == ""
