@@ -6,9 +6,14 @@ import datetime
 import os
 import re
 
+from rest_framework import status, views
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +21,7 @@ from django.views.generic.detail import DetailView
 
 from .conf import settings
 from .models import Video, Job
+from .serializers import ZencoderVideoSerializer
 
 
 @csrf_exempt
@@ -170,4 +176,31 @@ class VideoEmbedView(DetailView):
             response["Pragma"] = "no-cache"
             response["Expires"] = "0"
         return response
+
+
+class VideoJsonDetailView(views.APIView):
+
+    permission_classes = (AllowAny,)
+
+    def get(self, request, video_id):
+        """
+        This endpoint sets very permiscuous CORS headers.
+        Access-Control-Allow-Origin is set to the request Origin. This allows
+          a page from ANY domain to make a request to this endpoint.
+        Access-Control-Allow-Credentials is set to true. This allows requesting
+          video data in our authenticated test/staff environments.
+        This particular combination of headers means this endpoint is a potential
+            CSRF target.
+        This enpoint MUST NOT write data. And it MUST NOT return any sensitive data.
+        """
+        video = get_object_or_404(Video, pk=video_id)
+        response = Response(ZencoderVideoSerializer().to_representation(video), status=status.HTTP_200_OK)
+
+        response["Access-Control-Allow-Origin"] = self.request.META.get("HTTP_ORIGIN", None)
+        response["Access-Control-Allow-Credentials"] = 'true'
+
+        return response
+
+
 embed = VideoEmbedView.as_view()
+video_json = VideoJsonDetailView.as_view()

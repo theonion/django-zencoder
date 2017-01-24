@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from rest_framework import serializers
 
 from zencoder.utils.serializers import PlaceholderFieldsMixin
@@ -11,6 +13,7 @@ class ZencoderSourceSerializer(serializers.ModelSerializer):
 
 class ZencoderVideoSerializer(PlaceholderFieldsMixin, serializers.ModelSerializer):
 
+    player_options = serializers.SerializerMethodField()
     poster_url = serializers.SerializerMethodField()
     sources = ZencoderSourceSerializer(many=True)
     title = serializers.SerializerMethodField()
@@ -24,7 +27,6 @@ class ZencoderVideoSerializer(PlaceholderFieldsMixin, serializers.ModelSerialize
             "channel_slug": "",
             "channel_url": "",
             "description": "",
-            "player_options": {},
             "season": "",
             "series_logo_url": "",
             "series_name": "",
@@ -34,6 +36,19 @@ class ZencoderVideoSerializer(PlaceholderFieldsMixin, serializers.ModelSerialize
             "tags": [],
             "targeting": {},
             "tunic_campaign_url": None,
+        }
+
+    def get_player_options(self, obj):
+        comscore_settings = getattr(settings, "ZENCODER_COMSCORE_SETTINGS", {})
+        return {
+            "comscore": {
+                "id": getattr(settings, "VIDEOMETRIX_ID", None),
+                "metadata": {
+                    "ns_st_ci": None,
+                    "c3": comscore_settings.get("channel_name", ""),
+                    "c4": comscore_settings.get("channel_code", "")
+                }
+            }
         }
 
     def get_poster_url(self, obj):

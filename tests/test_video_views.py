@@ -1,10 +1,11 @@
 import pytest
 
+from django.core.urlresolvers import reverse
+
 from zencoder.models import Source, Video
-from zencoder.serializers import ZencoderSourceSerializer, ZencoderVideoSerializer
 
 
-def serializer_test_data():
+def create_test_data():
     video = Video.objects.create(
         duration=100,
         input="s3:/example.com/input.mp4",
@@ -36,20 +37,12 @@ def serializer_test_data():
 
 
 @pytest.mark.django_db
-def test_source_serializer():
-    test_data = serializer_test_data()
-    source = test_data["sources"][0]
-    data = ZencoderSourceSerializer().to_representation(source)
-    assert data["bitrate"] == source.bitrate
-    assert data["content_type"] == source.content_type
-    assert data["url"] == source.url
-    assert data["width"] == source.width
-
-
-@pytest.mark.django_db
-def test_video_serializer():
-    test_data = serializer_test_data()
-    data = ZencoderVideoSerializer().to_representation(test_data["video"])
+def test_video_json(client):
+    test_data = create_test_data()
+    video_json_url = reverse("video-json", kwargs={"video_id": test_data["video"].id})
+    resp = client.get(video_json_url)
+    assert resp.status_code == 200
+    data = resp.data
 
     # Placeholder values
     assert data["category"] == ""
