@@ -196,9 +196,8 @@ class VideoJsonDetailView(views.APIView):
         video = get_object_or_404(Video, pk=video_id)
         response = Response(ZencoderVideoSerializer().to_representation(video), status=status.HTTP_200_OK)
 
-        if "HTTP_ORIGIN" in self.request.META:
-            response["Access-Control-Allow-Origin"] = self.request.META["HTTP_ORIGIN"]
-            response["Access-Control-Allow-Credentials"] = 'true'
+        response["Access-Control-Allow-Origin"] = self.request.META.get("HTTP_ORIGIN", None)
+        response["Access-Control-Allow-Credentials"] = 'true'
 
         return response
 
