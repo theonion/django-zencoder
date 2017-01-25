@@ -6,5 +6,5 @@ urlpatterns = patterns('zencoder.views',
     url(r'^(?P<video_id>\d+)/encode$', 'encode'),
     url(r'^notify$', 'notify'),
     url(r'^embed$', 'embed'),
-    url(r'^video/(?P<video_id>\d+)$', 'video_json', name="video-json"),
+    url(r'^(?P<video_id>\d+)\.json$', 'video_json', name="video-json"),
 )

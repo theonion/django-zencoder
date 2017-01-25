@@ -40,6 +40,7 @@ def create_test_data():
 def test_video_json(client):
     test_data = create_test_data()
     video_json_url = reverse("video-json", kwargs={"video_id": test_data["video"].id})
+    assert video_json_url == "/video/1.json"
     resp = client.get(video_json_url)
     assert resp.status_code == 200
     data = resp.data
